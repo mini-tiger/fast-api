@@ -1,0 +1,6 @@
+/.idea/
+/conf
+/temp
+/log
+main.go
+go.sum
