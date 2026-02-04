@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/mini-tiger/fast-api/dError"
 )
@@ -11,10 +12,19 @@ import (
 // AppPath 项目根目录 示例： /Users/project/go/src/go-server-image
 var AppPath = "/app"
 
-// Mode 项目运行环境 [local, dev, produce]
-var Mode = "local"
+// Mode 项目运行环境 [dev, test, produce]
+var Mode = Dev
+
+type ModeType string
+
+const (
+	Dev     ModeType = "dev"
+	Test    ModeType = "test"
+	Produce ModeType = "produce"
+)
 
 func init() {
+	time.Local, _ = time.LoadLocation("Asia/Shanghai")
 	// 初始化项目根目录
 	initAppPth()
 	// 初始化运行环境
@@ -41,16 +51,16 @@ func initAppPth() {
 }
 
 func initMode() {
-	if 1 == len(os.Args) {
-		Mode = "local"
+	Mode = Dev
+	if len(os.Args) <= 1 {
 		return
 	}
-	modeTemp := os.Args[1]
-	modeMap := map[string]struct{}{"local": {}, "dev": {}, "produce": {}}
-
-	if _, ok := modeMap[modeTemp]; ok {
-		Mode = modeTemp
-		return
+	// 验证输入是否为有效的 ModeType 值
+	modeStr := os.Args[1]
+	switch ModeType(modeStr) {
+	case Dev, Test, Produce:
+		Mode = ModeType(modeStr)
+	default:
 	}
 }
 

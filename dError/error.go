@@ -1,29 +1,27 @@
 package dError
 
-import "errors"
-
-type errorType struct {
-	SourceErr error
+type ErrorType struct {
+	SourceErr []error
 	UserMag   string
 }
 
-func NewError(userMag string, sourceErrList ...error) *errorType {
-	var err error
-	if 0 == len(sourceErrList) {
-		err = errors.New("")
-	} else {
-		err = sourceErrList[0]
-	}
-	return &errorType{
+func NewError(userMag string, sourceErrList ...error) *ErrorType {
+	//var err error
+	//if 0 == len(sourceErrList) {
+	//	err = errors.New("")
+	//} else {
+	//	err = sourceErrList[0]
+	//}
+	return &ErrorType{
 		UserMag:   userMag,
-		SourceErr: err,
+		SourceErr: sourceErrList,
 	}
 }
 
-func (e *errorType) Error() string {
+func (e *ErrorType) Error() string {
 	return e.UserMag
 }
 
-func (e *errorType) GetContent() *errorType {
+func (e *ErrorType) GetContent() *ErrorType {
 	return e
 }

@@ -5,38 +5,39 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/mini-tiger/fast-api/core"
 	gormLogger "gorm.io/gorm/logger"
 )
 
-type logger struct {
+type loggerType struct {
 	LogLevel                            string
 	infoStr, warnStr, errStr            string
 	traceStr, traceErrStr, traceWarnStr string
 }
 
 // LogMode log mode
-func (l *logger) LogMode(level gormLogger.LogLevel) gormLogger.Interface {
+func (l *loggerType) LogMode(level gormLogger.LogLevel) gormLogger.Interface {
 	return l
 }
 
 // Info print info
-func (l logger) Info(ctx context.Context, msg string, data ...interface{}) {
-	//spew.Dump(data)
+func (l loggerType) Info(ctx context.Context, msg string, data ...interface{}) {
+	spew.Dump(data)
 }
 
 // Warn print warn messages
-func (l logger) Warn(ctx context.Context, msg string, data ...interface{}) {
+func (l loggerType) Warn(ctx context.Context, msg string, data ...interface{}) {
 	//spew.Dump(data)
 }
 
 // Error print error messages
-func (l logger) Error(ctx context.Context, msg string, data ...interface{}) {
+func (l loggerType) Error(ctx context.Context, msg string, data ...interface{}) {
 	//spew.Dump(data)
 }
 
 // Trace print sql message
-func (l logger) Trace(ctx context.Context, begin time.Time, fc func() (string, int64), err error) {
+func (l loggerType) Trace(ctx context.Context, begin time.Time, fc func() (string, int64), err error) {
 	sql, rowNum := fc()
 	if "INSERT INTO `log`" == sql[:17] {
 		return
