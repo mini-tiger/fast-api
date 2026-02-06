@@ -20,6 +20,10 @@ type MysqlType struct {
 	withCount     string
 }
 
+func Create() *MysqlType {
+	return &MysqlType{}
+}
+
 func (m *MysqlType) OpenTx(tx *gorm.DB) *MysqlType {
 	m.tx = tx
 	return m

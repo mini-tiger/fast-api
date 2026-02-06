@@ -12,6 +12,9 @@ func NewError(userMag string, sourceErrList ...error) *ErrorType {
 	//} else {
 	//	err = sourceErrList[0]
 	//}
+	for _, sourceErr := range sourceErrList {
+		userMag += "\n" + sourceErr.Error()
+	}
 	return &ErrorType{
 		UserMag:   userMag,
 		SourceErr: sourceErrList,

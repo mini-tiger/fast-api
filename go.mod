@@ -1,7 +1,9 @@
 module github.com/mini-tiger/fast-api
+
 go 1.24.0
 
 require (
+	github.com/aliyun/alibabacloud-oss-go-sdk-v2 v1.4.0
 	github.com/davecgh/go-spew v1.1.1
 	github.com/redis/go-redis/v9 v9.17.2
 	github.com/robfig/cron/v3 v3.0.1
@@ -18,4 +20,5 @@ require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	golang.org/x/text v0.33.0 // indirect
+	golang.org/x/time v0.4.0 // indirect
 )
