@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/mini-tiger/fast-api/config"
 	"github.com/mini-tiger/fast-api/dError"
 	"github.com/redis/go-redis/v9"
@@ -22,6 +23,9 @@ func init() {
 	host := redisConfig.Key("host").Value()
 	port := redisConfig.Key("port").Value()
 	password := redisConfig.Key("password").Value()
+	if len(password) == 0 {
+		password = redisConfig.Key("password1").Value() + "#" + redisConfig.Key("password2").Value()
+	}
 	db := redisConfig.Key("db").MustInt(0)
 
 	if host == "" {
@@ -356,4 +360,16 @@ func FlushDB() error {
 // Close 关闭Redis连接
 func Close() error {
 	return redisClient.Close()
+}
+
+func Lock(key string, value any, expiration time.Duration) (bool, error) {
+	result, err := redisClient.SetNX(ctx, key, value, expiration).Result()
+	if err != nil {
+		return false, err
+	}
+	return result, nil
+}
+
+func unLock(key string) error {
+	return redisClient.Del(ctx, key).Err()
 }
