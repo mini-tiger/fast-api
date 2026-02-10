@@ -28,7 +28,7 @@ func init() {
 }
 
 // Write 写入日志到logStash
-func Write(logLevel LogLevelType, typeString string, message interface{}) {
+func Write(logLevel LogLevelType, typeString string, message any) {
 	if core.Mode == core.Dev {
 		toWrite(logLevel, typeString, message)
 	} else {
@@ -49,9 +49,9 @@ func toWrite(logLevel LogLevelType, typeString string, message any) {
 		messageNew = v.Error()
 	default:
 		messageJson, err := json.Marshal(message)
-		messageNew = fmt.Sprintf("日志记录错误：%s\n", err.Error())
+		messageNew = string(messageJson)
 		if nil != err {
-			messageNew = string(messageJson)
+			messageNew = fmt.Sprintf("日志记录错误：%s\n", err.Error())
 		}
 	}
 	if core.Mode == core.Dev {
