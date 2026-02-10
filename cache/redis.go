@@ -9,7 +9,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/mini-tiger/fast-api/config"
 	"github.com/mini-tiger/fast-api/dError"
 	"github.com/redis/go-redis/v9"
