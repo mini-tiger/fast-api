@@ -136,6 +136,11 @@ func (m *MysqlType) Where(field string, op string, value interface{}) *MysqlType
 	return m
 }
 
+func (m *MysqlType) WhereRaw(where string) *MysqlType {
+	m.whereList = append(m.whereList, where)
+	return m
+}
+
 func (m *MysqlType) Get(data interface{}) int {
 	m.withCount = "SQL_CALC_FOUND_ROWS"
 
