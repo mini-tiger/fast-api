@@ -361,6 +361,7 @@ func Close() error {
 	return redisClient.Close()
 }
 
+// Lock 非阻塞锁，获取成功返回 true
 func Lock(key string, value any, expiration time.Duration) (bool, error) {
 	result, err := redisClient.SetNX(ctx, key, value, expiration).Result()
 	if err != nil {
@@ -368,7 +369,30 @@ func Lock(key string, value any, expiration time.Duration) (bool, error) {
 	}
 	return result, nil
 }
+func Unlock(key string) {
+	_ = redisClient.Del(ctx, key).Err()
+}
 
-func unLock(key string) error {
-	return redisClient.Del(ctx, key).Err()
+// BlockingLock 阻塞锁：在 waitTimeout 内轮询获取锁，获取成功返回 true；超时返回 false, nil
+func BlockingLock(key string, lockExpiration time.Duration) (bool, error) {
+	return BlockingLockWithInterval(key, 1, lockExpiration, 60*time.Second, 50*time.Millisecond)
+}
+
+// BlockingLockWithInterval
+// key 锁键；value 锁的值（建议唯一，解锁时需传入同一 value 调用 Unlock）；
+// lockExpiration 锁过期时间；waitTimeout 最长等待时间
+// 轮询间隔为 retryInterval，默认 50ms
+func BlockingLockWithInterval(key string, value interface{}, lockExpiration, waitTimeout, retryInterval time.Duration) (bool, error) {
+	deadline := time.Now().Add(waitTimeout)
+	for time.Now().Before(deadline) {
+		ok, err := Lock(key, value, lockExpiration)
+		if err != nil {
+			return false, err
+		}
+		if ok {
+			return true, nil
+		}
+		time.Sleep(retryInterval)
+	}
+	return false, nil
 }
