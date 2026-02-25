@@ -141,7 +141,17 @@ func (m *MysqlType) WhereRaw(where string) *MysqlType {
 	return m
 }
 
-func (m *MysqlType) Get(data interface{}) int {
+func (m *MysqlType) Get(data interface{}) {
+	m.build()
+	// 如果开启了外部事物，则这里无需开启事务
+	db := m.db()
+	if nil == db {
+		db = dbManager.GetInstance().Begin()
+	}
+	db.Raw(m.sql).Scan(data)
+}
+
+func (m *MysqlType) GetWithCount(data interface{}) int {
 	m.withCount = "SQL_CALC_FOUND_ROWS"
 
 	m.build()
@@ -162,21 +172,6 @@ func (m *MysqlType) Get(data interface{}) int {
 		db.Commit()
 	}
 	return total.Total
-}
-
-func (m *MysqlType) Count() int {
-	m.filed = "COUNT(*) as total"
-	m.build()
-	// 定一个临时结构体用于获取总条数
-	total := 0
-	// 如果开启了外部事物，则这里无需开启事务
-	db := m.db()
-	if nil == db {
-		db = dbManager.GetInstance()
-	}
-	db.Raw(m.sql).Scan(&total)
-
-	return total
 }
 
 func (m *MysqlType) build() {
