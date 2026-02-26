@@ -21,7 +21,9 @@ type MysqlType struct {
 }
 
 func Create() *MysqlType {
-	return &MysqlType{}
+	return &MysqlType{
+		filed: "*",
+	}
 }
 
 func (m *MysqlType) OpenTx(tx *gorm.DB) *MysqlType {
@@ -50,7 +52,7 @@ func (m *MysqlType) SetTableName(tableName string) *MysqlType {
 	return m
 }
 
-func (m *MysqlType) SetSearchFiled(filed string) *MysqlType {
+func (m *MysqlType) SetFiled(filed string) *MysqlType {
 	m.filed = filed
 	return m
 }
@@ -143,10 +145,9 @@ func (m *MysqlType) WhereRaw(where string) *MysqlType {
 
 func (m *MysqlType) Get(data interface{}) {
 	m.build()
-	// 如果开启了外部事物，则这里无需开启事务
 	db := m.db()
 	if nil == db {
-		db = dbManager.GetInstance().Begin()
+		db = dbManager.GetInstance()
 	}
 	db.Raw(m.sql).Scan(data)
 }
